@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: Arial, sans-serif; color: #222; margin: 20px; }
+        h1 { color: #0d6efd; border-bottom: 2px solid #0d6efd; padding-bottom: 5px; }
+        .meta { background: #f4f6f9; padding: 10px; border-radius: 5px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; font-size: 12px; }
+        th { background-color: #0d6efd; color: white; }
+        img { max-width: 100%; height: auto; border: 1px solid #ddd; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h1>Rapport d'Audit Technique Réseau — NetAudit</h1>
+    <div class="meta">
+        <p><strong>Audit ID :</strong> #{{ scan.id }}</p>
+        <p><strong>Cible analysée :</strong> {{ scan.target }}</p>
+        <p><strong>Date de l'audit :</strong> {{ scan.scan_date }}</p>
+        <p><strong>Résumé :</strong> {{ scan.hosts_count }} machine(s) active(s) | {{ scan.open_ports_count }} port(s) ouvert(s)</p>
+    </div>
+
+    {% if scan.graph_path %}
+    <h2>1. Cartographie du Réseau</h2>
+    <img src="static/{{ scan.graph_path }}" alt="Cartographie réseau">
+    {% endif %}
+
+    <h2>2. Détails des Machines et Services Détectés</h2>
+    {% for host in scan.hosts %}
+    <h3>Hôte : {{ host.ip }} ({{ host.hostname }})</h3>
+    {% if host.ports %}
+    <table>
+        <thead><tr><th>Port</th><th>Protocole</th><th>État</th><th>Service</th><th>Version</th></tr></thead>
+        <tbody>
+            {% for p in host.ports %}
+            <tr>
+                <td>{{ p.port }}</td>
+                <td>{{ p.protocol }}</td>
+                <td>{{ p.state }}</td>
+                <td>{{ p.service }}</td>
+                <td>{{ p.version }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>Aucun port ouvert détecté.</p>
+    {% endif %}
+    {% endfor %}
+</body>
+</html>
