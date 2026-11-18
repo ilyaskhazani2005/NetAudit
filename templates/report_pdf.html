@@ -5,20 +5,28 @@
     <style>
         body { font-family: Arial, sans-serif; color: #222; margin: 20px; }
         h1 { color: #0d6efd; border-bottom: 2px solid #0d6efd; padding-bottom: 5px; }
-        .meta { background: #f4f6f9; padding: 10px; border-radius: 5px; margin-bottom: 20px; }
+        .meta { background: #f4f6f9; padding: 12px; border-radius: 5px; margin-bottom: 20px; }
+        .score-box { background: #eef4ff; border-left: 4px solid #0d6efd; padding: 10px; margin-bottom: 20px; }
         table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 20px; }
-        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; font-size: 12px; }
+        th, td { border: 1px solid #ccc; padding: 7px; text-align: left; font-size: 11px; }
         th { background-color: #0d6efd; color: white; }
+        .risk-Élevé { color: #dc3545; font-weight: bold; }
+        .risk-Moyen { color: #d97706; font-weight: bold; }
+        .risk-Faible { color: #198754; font-weight: bold; }
         img { max-width: 100%; height: auto; border: 1px solid #ddd; margin-top: 10px; }
     </style>
 </head>
 <body>
     <h1>Rapport d'Audit Technique Réseau — NetAudit</h1>
     <div class="meta">
-        <p><strong>Audit ID :</strong> #{{ scan.id }}</p>
+        <p><strong>Audit ID :</strong> #{{ scan.id }} | <strong>Date :</strong> {{ scan.scan_date }}</p>
         <p><strong>Cible analysée :</strong> {{ scan.target }}</p>
-        <p><strong>Date de l'audit :</strong> {{ scan.scan_date }}</p>
         <p><strong>Résumé :</strong> {{ scan.hosts_count }} machine(s) active(s) | {{ scan.open_ports_count }} port(s) ouvert(s)</p>
+    </div>
+
+    <div class="score-box">
+        <strong>Score Global de Sécurité : {{ audit_summary.score }}/100 — {{ audit_summary.label }}</strong><br>
+        <small>Risques Élevés : {{ audit_summary.high_count }} | Risques Moyens : {{ audit_summary.medium_count }} | Risques Faibles : {{ audit_summary.low_count }}</small>
     </div>
 
     {% if scan.graph_path %}
@@ -26,20 +34,28 @@
     <img src="static/{{ scan.graph_path }}" alt="Cartographie réseau">
     {% endif %}
 
-    <h2>2. Détails des Machines et Services Détectés</h2>
+    <h2>2. Détails des Vulnérabilités, Services et Recommandations</h2>
     {% for host in scan.hosts %}
     <h3>Hôte : {{ host.ip }} ({{ host.hostname }})</h3>
     {% if host.ports %}
     <table>
-        <thead><tr><th>Port</th><th>Protocole</th><th>État</th><th>Service</th><th>Version</th></tr></thead>
+        <thead>
+            <tr>
+                <th>Port</th>
+                <th>Service</th>
+                <th>Version</th>
+                <th>Risque</th>
+                <th>Recommandation</th>
+            </tr>
+        </thead>
         <tbody>
             {% for p in host.ports %}
             <tr>
-                <td>{{ p.port }}</td>
-                <td>{{ p.protocol }}</td>
-                <td>{{ p.state }}</td>
+                <td>{{ p.port }}/{{ p.protocol }}</td>
                 <td>{{ p.service }}</td>
                 <td>{{ p.version }}</td>
+                <td class="risk-{{ p.risk or 'Faible' }}">{{ p.risk or 'Faible' }}</td>
+                <td>{{ p.recommendation or 'Vérifier la configuration du service.' }}</td>
             </tr>
             {% endfor %}
         </tbody>

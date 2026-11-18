@@ -14,13 +14,17 @@
     {% endif %}
 
     <div class="card bg-secondary text-light p-4 mb-5">
-        <form method="POST" action="/">
+        <form method="POST" action="/" onsubmit="document.getElementById('loadingSpinner').classList.remove('d-none'); document.getElementById('scanBtn').disabled = true;">
             <label class="form-label fw-bold">Plage IP ou Cible Autorisée (Réseau Privé uniquement) :</label>
             <div class="input-group">
                 <input type="text" name="target" class="form-control" placeholder="Ex: 127.0.0.1 ou 192.168.1.0/24" required>
-                <button type="submit" class="btn btn-primary fw-bold">Lancer l'Audit</button>
+                <button id="scanBtn" type="submit" class="btn btn-primary fw-bold">Lancer l'Audit</button>
             </div>
         </form>
+        <div id="loadingSpinner" class="d-none mt-3 text-warning fw-bold">
+            <div class="spinner-border spinner-border-sm me-2" role="status"></div>
+            Scan Nmap et cartographie en cours... Veuillez patienter.
+        </div>
     </div>
 
     <h3>Historique des Audits</h3>

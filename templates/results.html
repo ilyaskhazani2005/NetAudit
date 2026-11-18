@@ -15,7 +15,33 @@
         </div>
     </div>
 
-    <p><strong>Date :</strong> {{ scan.scan_date }} | <strong>Machines actives :</strong> {{ scan.hosts_count }} | <strong>Ports ouverts :</strong> {{ scan.open_ports_count }}</p>
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card bg-secondary text-light p-3 h-100">
+                <small class="text-uppercase text-light opacity-75">Score de Sécurité</small>
+                <h2 class="mt-1 mb-1 text-{{ audit_summary.color }} fw-bold">{{ audit_summary.score }}/100</h2>
+                <span class="badge bg-{{ audit_summary.color }}">{{ audit_summary.label }}</span>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-secondary text-light p-3 h-100">
+                <small class="text-uppercase text-light opacity-75">Surface d'Exposition</small>
+                <h4 class="mt-2 mb-1">{{ scan.hosts_count }} machine(s) active(s)</h4>
+                <p class="mb-0">{{ scan.open_ports_count }} port(s) ouvert(s) détecté(s)</p>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card bg-secondary text-light p-3 h-100">
+                <small class="text-uppercase text-light opacity-75">Répartition des Risques</small>
+                <div class="mt-2">
+                    <span class="badge bg-danger me-1">Élevé : {{ audit_summary.high_count }}</span>
+                    <span class="badge bg-warning text-dark me-1">Moyen : {{ audit_summary.medium_count }}</span>
+                    <span class="badge bg-success">Faible : {{ audit_summary.low_count }}</span>
+                </div>
+                <small class="mt-2 d-block opacity-75">Audit du {{ scan.scan_date }}</small>
+            </div>
+        </div>
+    </div>
 
     {% if scan.graph_path %}
     <div class="card bg-secondary p-3 mb-4 text-center">
@@ -29,20 +55,30 @@
         <div class="card-header fw-bold">Machine : {{ host.ip }} ({{ host.hostname }}) — État : {{ host.state }}</div>
         <div class="card-body">
             {% if host.ports %}
-            <table class="table table-dark table-sm mb-0">
-                <thead><tr><th>Port</th><th>Protocole</th><th>État</th><th>Service</th><th>Version</th></tr></thead>
-                <tbody>
-                    {% for p in host.ports %}
-                    <tr>
-                        <td>{{ p.port }}</td>
-                        <td>{{ p.protocol }}</td>
-                        <td><span class="badge bg-success">{{ p.state }}</span></td>
-                        <td>{{ p.service }}</td>
-                        <td>{{ p.version }}</td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+            <div class="table-responsive">
+                <table class="table table-dark table-sm align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Port</th>
+                            <th>Service</th>
+                            <th>Version</th>
+                            <th>Risque</th>
+                            <th>Recommandation de Sécurité</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for p in host.ports %}
+                        <tr>
+                            <td class="fw-bold">{{ p.port }}/{{ p.protocol }}</td>
+                            <td>{{ p.service }}</td>
+                            <td>{{ p.version }}</td>
+                            <td><span class="badge bg-{{ p.risk_color or 'secondary' }}">{{ p.risk or 'Faible' }}</span></td>
+                            <td>{{ p.recommendation or 'Vérifier la configuration du service.' }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
             {% else %}
             <p class="mb-0">Aucun port ouvert détecté sur cette machine.</p>
             {% endif %}

@@ -1,6 +1,6 @@
 import os
 import matplotlib
-matplotlib.use("Agg")  # Mode sans interface graphique (obligatoire avec Flask)
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import networkx as nx
 
@@ -21,8 +21,8 @@ def generate_network_graph(hosts_data, scan_id):
         ports = host.get("ports", [])
 
         if ports:
-            ports_str = ", ".join([f"{p['port']}/{p['service']}" for p in ports[:5]])
-            if len(ports) > 5:
+            ports_str = ", ".join([f"{p['port']}/{p['service']}" for p in ports[:4]])
+            if len(ports) > 4:
                 ports_str += "..."
         else:
             ports_str = "Aucun port ouvert"
@@ -35,14 +35,14 @@ def generate_network_graph(hosts_data, scan_id):
     ax = plt.gca()
     ax.set_facecolor("#121417")
 
-    pos = nx.spring_layout(G, seed=42, k=1.2)
+    pos = nx.spring_layout(G, seed=42, k=1.1)
 
     node_colors = [
         "#dc3545" if G.nodes[n].get("node_type") == "scanner" else "#0d6efd"
         for n in G.nodes()
     ]
     node_sizes = [
-        3200 if G.nodes[n].get("node_type") == "scanner" else 2600
+        3000 if G.nodes[n].get("node_type") == "scanner" else 2400
         for n in G.nodes()
     ]
 
@@ -54,6 +54,7 @@ def generate_network_graph(hosts_data, scan_id):
         G, pos, font_size=8.5, font_color="white", font_weight="bold"
     )
 
+    plt.margins(0.22)
     title_text = (
         f"Cartographie Réseau - Audit #{scan_id} ({len(hosts_data)} machine(s) active(s))"
         if hosts_data
@@ -66,18 +67,3 @@ def generate_network_graph(hosts_data, scan_id):
     plt.close()
 
     return f"graphs/scan_{scan_id}.png"
-
-if __name__ == "__main__":
-    sample_data = [
-        {
-            "ip": "127.0.0.1",
-            "hostname": "localhost",
-            "state": "up",
-            "ports": [
-                {"port": 22, "service": "ssh"},
-                {"port": 53, "service": "domain"}
-            ]
-        }
-    ]
-    path = generate_network_graph(sample_data, "test")
-    print(f"Graphique généré avec succès : static/{path}")
