@@ -98,7 +98,7 @@ def run_network_scan(target):
         raise ValueError(result_or_msg)
 
     nm = nmap.PortScanner()
-    nm.scan(hosts=result_or_msg, arguments="-sV -T4 --top-ports 100")
+    nm.scan(hosts=result_or_msg, arguments="-sV --version-intensity 2 -T4 -n --min-rate 1000 --max-retries 1 --host-timeout 15s --top-ports 100")
 
     hosts_list = []
     for host in nm.all_hosts():
