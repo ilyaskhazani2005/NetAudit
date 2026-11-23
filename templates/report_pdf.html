@@ -3,66 +3,389 @@
 <head>
     <meta charset="UTF-8">
     <style>
-        body { font-family: Arial, sans-serif; color: #222; margin: 20px; }
-        h1 { color: #0d6efd; border-bottom: 2px solid #0d6efd; padding-bottom: 5px; }
-        .meta { background: #f4f6f9; padding: 12px; border-radius: 5px; margin-bottom: 20px; }
-        .score-box { background: #eef4ff; border-left: 4px solid #0d6efd; padding: 10px; margin-bottom: 20px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 10px; margin-bottom: 20px; }
-        th, td { border: 1px solid #ccc; padding: 7px; text-align: left; font-size: 11px; }
-        th { background-color: #0d6efd; color: white; }
-        .risk-Élevé { color: #dc3545; font-weight: bold; }
-        .risk-Moyen { color: #d97706; font-weight: bold; }
-        .risk-Faible { color: #198754; font-weight: bold; }
-        img { max-width: 100%; height: auto; border: 1px solid #ddd; margin-top: 10px; }
+        @page {
+            size: A4;
+            margin: 20mm 16mm 19mm;
+
+            @bottom-left {
+                content: "NetAudit | Rapport d'audit technique";
+                color: #64748b;
+                font-size: 8px;
+                font-family: Arial, sans-serif;
+            }
+
+            @bottom-right {
+                content: "Page " counter(page) " / " counter(pages);
+                color: #64748b;
+                font-size: 8px;
+                font-family: Arial, sans-serif;
+            }
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            color: #27364b;
+            background: #ffffff;
+            margin: 0;
+            font-size: 10px;
+            line-height: 1.55;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .report-header {
+            background: #102747;
+            color: #ffffff;
+            padding: 25px 24px 22px;
+            margin-bottom: 22px;
+            border-bottom: 4px solid #3d83b8;
+        }
+
+        .brand {
+            color: #b9d7ed;
+            font-size: 10px;
+            font-weight: bold;
+            letter-spacing: 2px;
+            margin-bottom: 13px;
+        }
+
+        h1 {
+            color: #ffffff;
+            font-size: 21px;
+            font-weight: bold;
+            margin: 0 0 7px;
+        }
+
+        .header-subtitle {
+            color: #c3d1e0;
+            font-size: 10px;
+            margin: 0;
+        }
+
+        h2 {
+            color: #102747;
+            font-size: 14px;
+            font-weight: bold;
+            margin: 25px 0 12px;
+            padding: 0 0 8px 10px;
+            border-left: 4px solid #397eaf;
+            border-bottom: 1px solid #dce4ec;
+            page-break-after: avoid;
+        }
+
+        h3 {
+            color: #183b61;
+            font-size: 11px;
+            font-weight: bold;
+            margin: 19px 0 8px;
+            padding: 8px 10px;
+            background: #edf3f8;
+            border-left: 3px solid #397eaf;
+            page-break-after: avoid;
+        }
+
+        .meta {
+            width: 100%;
+            border: 1px solid #d9e2ec;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+        }
+
+        .meta td {
+            padding: 10px 12px;
+            border: 1px solid #d9e2ec;
+            font-size: 9px;
+        }
+
+        .meta .meta-label {
+            width: 27%;
+            color: #52657c;
+            font-weight: bold;
+            background: #f1f5f9;
+        }
+
+        .meta .meta-value {
+            color: #1e3552;
+            font-weight: normal;
+        }
+
+        .score-box {
+            background: #edf3f9;
+            border: 1px solid #cfdae6;
+            border-left: 5px solid #214d78;
+            padding: 15px 17px;
+            margin-bottom: 17px;
+        }
+
+        .score-title {
+            color: #52657c;
+            font-size: 9px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .score-value {
+            color: #102747;
+            font-size: 23px;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .score-label {
+            color: #315f89;
+            font-size: 10px;
+            font-weight: bold;
+        }
+
+        .risk-summary {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 13px;
+        }
+
+        .risk-summary td {
+            padding: 8px 10px;
+            border: 1px solid #d8e1eb;
+            font-size: 9px;
+            font-weight: bold;
+            background: #ffffff;
+        }
+
+        .risk-high {
+            color: #b42332;
+        }
+
+        .risk-medium {
+            color: #a66a12;
+        }
+
+        .risk-low {
+            color: #23764b;
+        }
+
+        .graph-wrapper {
+            border: 1px solid #dce4ec;
+            padding: 12px;
+            text-align: center;
+            background: #ffffff;
+            margin: 10px 0 18px;
+        }
+
+        .graph-wrapper img {
+            max-width: 100%;
+            max-height: 390px;
+            height: auto;
+        }
+
+        table.data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 8px 0 18px;
+            table-layout: fixed;
+            page-break-inside: auto;
+        }
+
+        .data-table thead {
+            display: table-header-group;
+        }
+
+        .data-table th {
+            background: #173657;
+            color: #ffffff;
+            padding: 9px 7px;
+            font-size: 8px;
+            font-weight: bold;
+            text-align: left;
+            border: 1px solid #173657;
+        }
+
+        .data-table td {
+            padding: 8px 7px;
+            font-size: 8px;
+            color: #334155;
+            border: 1px solid #dce3eb;
+            vertical-align: top;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
+
+        .data-table tbody tr:nth-child(even) {
+            background: #f3f6f9;
+        }
+
+        .data-table tbody tr:nth-child(odd) {
+            background: #ffffff;
+        }
+
+        .data-table th:nth-child(1) { width: 11%; }
+        .data-table th:nth-child(2) { width: 14%; }
+        .data-table th:nth-child(3) { width: 18%; }
+        .data-table th:nth-child(4) { width: 12%; }
+        .data-table th:nth-child(5) { width: 45%; }
+
+        .port-cell {
+            color: #173f67 !important;
+            font-weight: bold;
+        }
+
+        .risk-Élevé {
+            color: #b42332 !important;
+            font-weight: bold;
+        }
+
+        .risk-Moyen {
+            color: #a66a12 !important;
+            font-weight: bold;
+        }
+
+        .risk-Faible {
+            color: #23764b !important;
+            font-weight: bold;
+        }
+
+        .empty-message {
+            color: #64748b;
+            background: #f3f6f9;
+            border: 1px solid #dce3eb;
+            padding: 11px;
+            margin: 8px 0 15px;
+        }
+
+        .report-note {
+            color: #64748b;
+            font-size: 8px;
+            border-top: 1px solid #dce4ec;
+            padding-top: 9px;
+            margin-top: 25px;
+        }
+
+        tr {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+
+        h2, h3 {
+            page-break-after: avoid;
+        }
     </style>
 </head>
-<body>
-    <h1>Rapport d'Audit Technique Réseau — NetAudit</h1>
-    <div class="meta">
-        <p><strong>Audit ID :</strong> #{{ scan.id }} | <strong>Date :</strong> {{ scan.scan_date }}</p>
-        <p><strong>Cible analysée :</strong> {{ scan.target }}</p>
-        <p><strong>Résumé :</strong> {{ scan.hosts_count }} machine(s) active(s) | {{ scan.open_ports_count }} port(s) ouvert(s)</p>
-    </div>
 
-    <div class="score-box">
-        <strong>Score Global de Sécurité : {{ audit_summary.score }}/100 — {{ audit_summary.label }}</strong><br>
-        <small>Risques Élevés : {{ audit_summary.high_count }} | Risques Moyens : {{ audit_summary.medium_count }} | Risques Faibles : {{ audit_summary.low_count }}</small>
-    </div>
+<body>
+
+    <header class="report-header">
+        <div class="brand">NETAUDIT | NETWORK SECURITY</div>
+        <h1>Rapport d'Audit Technique Réseau</h1>
+        <p class="header-subtitle">
+            Analyse de l'infrastructure et évaluation de la sécurité réseau
+        </p>
+    </header>
+
+    <table class="meta">
+        <tr>
+            <td class="meta-label">Référence de l'audit</td>
+            <td class="meta-value">#{{ scan.id }}</td>
+        </tr>
+        <tr>
+            <td class="meta-label">Date de l'analyse</td>
+            <td class="meta-value">{{ scan.scan_date }}</td>
+        </tr>
+        <tr>
+            <td class="meta-label">Cible analysée</td>
+            <td class="meta-value">{{ scan.target }}</td>
+        </tr>
+        <tr>
+            <td class="meta-label">Machines actives</td>
+            <td class="meta-value">{{ scan.hosts_count }}</td>
+        </tr>
+        <tr>
+            <td class="meta-label">Ports ouverts détectés</td>
+            <td class="meta-value">{{ scan.open_ports_count }}</td>
+        </tr>
+    </table>
+
+    <section class="score-box">
+        <div class="score-title">ÉVALUATION GLOBALE DE LA SÉCURITÉ</div>
+        <div class="score-value">{{ audit_summary.score }}/100</div>
+        <div class="score-label">{{ audit_summary.label }}</div>
+
+        <table class="risk-summary">
+            <tr>
+                <td class="risk-high">
+                    Risques élevés : {{ audit_summary.high_count }}
+                </td>
+                <td class="risk-medium">
+                    Risques moyens : {{ audit_summary.medium_count }}
+                </td>
+                <td class="risk-low">
+                    Risques faibles : {{ audit_summary.low_count }}
+                </td>
+            </tr>
+        </table>
+    </section>
 
     {% if scan.graph_path %}
-    <h2>1. Cartographie du Réseau</h2>
-    <img src="static/{{ scan.graph_path }}" alt="Cartographie réseau">
+    <h2>1. Cartographie du réseau</h2>
+
+    <div class="graph-wrapper">
+        <img src="static/{{ scan.graph_path }}" alt="Cartographie du réseau">
+    </div>
     {% endif %}
 
-    <h2>2. Détails des Vulnérabilités, Services et Recommandations</h2>
+    <h2>2. Détail des machines et des services détectés</h2>
+
     {% for host in scan.hosts %}
-    <h3>Hôte : {{ host.ip }} ({{ host.hostname }})</h3>
+
+    <h3>
+        Hôte : {{ host.ip }} — {{ host.hostname }}
+    </h3>
+
     {% if host.ports %}
-    <table>
+    <table class="data-table">
         <thead>
             <tr>
                 <th>Port</th>
                 <th>Service</th>
                 <th>Version</th>
                 <th>Risque</th>
-                <th>Recommandation</th>
+                <th>Recommandation de sécurité</th>
             </tr>
         </thead>
+
         <tbody>
             {% for p in host.ports %}
             <tr>
-                <td>{{ p.port }}/{{ p.protocol }}</td>
+                <td class="port-cell">{{ p.port }}/{{ p.protocol }}</td>
                 <td>{{ p.service }}</td>
                 <td>{{ p.version }}</td>
-                <td class="risk-{{ p.risk or 'Faible' }}">{{ p.risk or 'Faible' }}</td>
-                <td>{{ p.recommendation or 'Vérifier la configuration du service.' }}</td>
+                <td class="risk-{{ p.risk or 'Faible' }}">
+                    {{ p.risk or 'Faible' }}
+                </td>
+                <td>
+                    {{ p.recommendation or 'Vérifier la configuration du service.' }}
+                </td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
+
     {% else %}
-    <p>Aucun port ouvert détecté.</p>
+    <p class="empty-message">
+        Aucun port ouvert détecté sur cette machine.
+    </p>
     {% endif %}
+
     {% endfor %}
+
+    <p class="report-note">
+        Ce document présente les résultats techniques obtenus lors de l'audit
+        réalisé avec NetAudit. Les recommandations doivent être examinées
+        et validées par l'administrateur du réseau.
+    </p>
+
 </body>
 </html>

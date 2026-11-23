@@ -42,7 +42,7 @@ def generate_network_graph(hosts_data, scan_id):
         for n in G.nodes()
     ]
     node_sizes = [
-        3000 if G.nodes[n].get("node_type") == "scanner" else 2400
+        3000 if G.nodes[n].get("node_type") == "scanner" else 4200
         for n in G.nodes()
     ]
 
@@ -51,7 +51,7 @@ def generate_network_graph(hosts_data, scan_id):
         G, pos, node_color=node_colors, node_size=node_sizes, edgecolors="white", linewidths=1.5
     )
     nx.draw_networkx_labels(
-        G, pos, font_size=8.5, font_color="white", font_weight="bold"
+        G, pos, font_size=7, font_color="white", font_weight="bold"
     )
 
     plt.margins(0.22)
